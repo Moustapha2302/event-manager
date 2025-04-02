@@ -48,25 +48,28 @@ class EventController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'date' => 'required|date|after_or_equal:today',
-            'location' => 'required|string',
-            'image' => 'sometimes|image|max:2048'
-        ]);
+{
+    abort_if(!Auth::user()->hasRole('admin'), 403, 'Unauthorized');
 
-        if ($request->hasFile('image')) {
-            $validated['image_path'] = $request->file('image')->store('event_images');
-        }
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'required|string',
+        'date' => 'required|date|after_or_equal:today',
+        'location' => 'required|string',
+        'image' => 'sometimes|image|max:2048'
+    ]);
 
-        // Création de l'événement en associant l'utilisateur connecté
-        $validated['user_id'] = Auth::id();
-        $event = Event::create($validated);
-
-        return new EventResource($event->load('user'));
+    if ($request->hasFile('image')) {
+        $validated['image_path'] = $request->file('image')->store('event_images');
     }
+
+    // Création de l'événement en associant l'utilisateur connecté
+    $validated['user_id'] = Auth::id();
+    $event = Event::create($validated);
+
+    return new EventResource($event->load('user'));
+}
+
 
     public function show(Event $event)
     {

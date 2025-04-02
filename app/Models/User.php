@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role' // 'admin' ou 'user'
     ];
 
     public function events()
@@ -28,14 +28,18 @@ class User extends Authenticatable
         return $this->hasMany(Registration::class);
     }
 
-    // Ajouter ces méthodes à la classe User
-public function isAdmin(): bool
-{
-    return $this->role === 'admin';
-}
+    /**
+     * Méthode pour vérifier si l'utilisateur a le rôle 'admin'.
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
 
-public function ownsEvent(Event $event): bool
-{
-    return $this->id === $event->user_id;
-}
+    public function ownsEvent(Event $event): bool
+    {
+        return $this->id === $event->user_id;
+    }
 }

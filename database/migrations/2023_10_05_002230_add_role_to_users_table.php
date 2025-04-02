@@ -7,22 +7,22 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Reverse the previous migration (delete role column).
      */
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('role')->default('user'); // ou le type approprié
+            $table->dropColumn('role'); // Supprime la colonne `role`
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Reverse the changes if necessary.
      */
-    public function down(): void
+    public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->string('role')->default('user'); // Ajout de la colonne si rollback
         });
     }
 };
