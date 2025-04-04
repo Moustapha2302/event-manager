@@ -101,6 +101,9 @@ class EventController extends Controller
 
     public function attendeesPdf(Event $event)
 {
+    // Vérifier si l'utilisateur connecté est admin
+    abort_if(!Auth::user()->hasRole('admin'), 403, 'Accès refusé');
+
     $event->load('registrations.user');
 
     $pdf = Pdf::loadView('pdf.attendees', [
@@ -108,6 +111,7 @@ class EventController extends Controller
         'attendees' => $event->registrations
     ]);
 
-    return $pdf->download('attendees-'.$event->id.'.pdf');
+    return $pdf->download('attendees_' . $event->name . '_' . $event->id . '.pdf');
 }
+
 }

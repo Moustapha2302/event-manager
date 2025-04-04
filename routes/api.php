@@ -21,5 +21,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('/events/{event}/register', [RegistrationController::class, 'register']);
     Route::delete('/events/{event}/unregister', [RegistrationController::class, 'unregister']);
-    Route::get('/events/{event}/attendees', [RegistrationController::class, 'attendees']);
+    Route::get('/events/{event}/attendees/pdf', [EventController::class, 'attendeesPdf']);
 });
